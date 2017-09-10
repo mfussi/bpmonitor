@@ -18,7 +18,20 @@ Currently only the DL8765 device by Philips is supported.
 
 Download
 --------
-
+gradle:
+```
+allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+```
+```
+dependencies {
+  compile 'com.github.mfussi:bpmonitor:v0.8.0'
+}
+```
 
 How to use
 --------
