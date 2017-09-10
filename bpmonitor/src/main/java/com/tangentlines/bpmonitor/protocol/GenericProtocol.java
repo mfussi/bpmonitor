@@ -136,6 +136,9 @@ public abstract class GenericProtocol implements Protocol {
 
     protected abstract void fireError(BPMonitorError error);
 
+    /*
+     * tries to receive generic device information
+     */
     protected void requestDeviceInformation() {
         Log.d(TAG, "requestDeviceInformation()");
 
@@ -148,6 +151,9 @@ public abstract class GenericProtocol implements Protocol {
 
     }
 
+    /*
+     * Notify the device that we want to be informed on updates on the blood pressure data und control channel
+     */
     protected void registerForNotifications() {
         Log.d(TAG, "registerForNotifications()");
 

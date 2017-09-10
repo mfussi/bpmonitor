@@ -30,6 +30,20 @@ import com.tangentlines.bpmonitor.utils.ListUtils;
 
 import java.util.Arrays;
 
+/*
+ * Protocol:
+ *  1.  read device information
+ *  2.  register for indications on the control and data channel
+ *  3.  receive password by device
+ *  4.  send random broadcastID
+ *  5.  receive challenge by device
+ *  6.  send challenge response (challenge XOR password)
+ *  7.  devices returns current list of numbers
+ *  8.  set userId and username
+ *  9.  select user
+ *  10. send current time
+ *  11. finish protocol - device disconnects
+ */
 public class PairingProtocol extends GenericProtocol {
 
     private static final String TAG = PairingProtocol.class.getSimpleName();

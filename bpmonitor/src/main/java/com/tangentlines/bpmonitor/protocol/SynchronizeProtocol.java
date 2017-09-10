@@ -30,10 +30,16 @@ import com.tangentlines.bpmonitor.utils.ListUtils;
 
 import java.util.Arrays;
 
-/**
- * Created by markus on 02.09.17.
+/*
+ * Protocol:
+ *  1. read device information
+ *  2. register for indications on the control and data channel
+ *  3. receive challenge by device
+ *  6. send challenge response (challenge XOR password)
+ *  7. send broadcastId (selects the user)
+ *  8. send current time
+ *  9. finish protocol - device will return readings
  */
-
 public class SynchronizeProtocol extends GenericProtocol {
 
     private static final String TAG = SynchronizeProtocol.class.getSimpleName();

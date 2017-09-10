@@ -19,10 +19,6 @@ import com.tangentlines.bpmonitor.BPMonitor;
 import com.tangentlines.bpmonitor.model.BloodPressureReading;
 import com.tangentlines.bpmonitor.BPMonitorError;
 
-/**
- * Created by markus on 24.08.17.
- */
-
 public interface SynchronizationCallbacks {
 
     void onSynchronizationStarted(BPMonitor device);

@@ -74,6 +74,10 @@ public class BPMonitor extends GenericLEDevice implements ProtocolListener {
 
     }
 
+    /*
+     * Initially connect to the bluetooth device, and
+     * discover its GATT services
+     */
     public void connect(Context context) {
 
         if (super.connectToGatt(context)) {
@@ -87,6 +91,10 @@ public class BPMonitor extends GenericLEDevice implements ProtocolListener {
         super.disconnectFromGatt();
     }
 
+    /*
+     * Starts the pairing mode
+     * After pairing the broadcastId and password are returned to the user
+     */
     public void startPairing(@NonNull PairingCallbacks callbacks) {
 
         mProtocol = new PairingProtocol(this, callbacks);
@@ -95,6 +103,11 @@ public class BPMonitor extends GenericLEDevice implements ProtocolListener {
 
     }
 
+    /*
+     * Starts the synchronization process
+     * password and broadcastId were obtained while pairing
+     * If the synchronization process is successfully, the device will return its blood pressure readings
+     */
     public void startSynchronization(byte[] password, byte[] broadcastId, @NonNull SynchronizationCallbacks callbacks) {
 
         mProtocol = new SynchronizeProtocol(this, password, broadcastId, callbacks);
@@ -103,6 +116,9 @@ public class BPMonitor extends GenericLEDevice implements ProtocolListener {
 
     }
 
+    /*
+     * Selects the user if the device is in pairing mode
+     */
     public void selectUser(int id, String name) {
 
         if (mProtocol != null && mProtocol instanceof PairingProtocol) {

@@ -21,10 +21,6 @@ import com.tangentlines.bpmonitor.model.UserInformation;
 
 import java.util.List;
 
-/**
- * Created by markus on 24.08.17.
- */
-
 public interface PairingCallbacks {
 
     void onUsersReceived(BPMonitor device, List<UserInformation> users);
