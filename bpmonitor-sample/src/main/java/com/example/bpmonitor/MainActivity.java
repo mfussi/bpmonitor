@@ -15,6 +15,7 @@
  */
 package com.example.bpmonitor;
 
+import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.content.ComponentName;
@@ -22,12 +23,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,13 +60,18 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    private static final int MY_PERMISSIONS_REQUEST_ACCESS_LOCATION = 33;
+
     private ViewHolder mViews;
     private DeviceAdapter mDeviceAdapter;
     private BPMonitor mDevice;
 
+    private static String[] DEVICE_FILTER = new String[]{"0DL87651", "1DL87651"};
+
     @Override
     protected void onStart() {
         super.onStart();
+        checkForLocationPermission();
     }
 
     @Override
@@ -380,7 +390,7 @@ public class MainActivity extends AppCompatActivity {
             mDeviceAdapter.addAll(mBluetoothDiscoveryService.getDiscoveredDevices());
             mDeviceAdapter.notifyDataSetChanged();
 
-            mBluetoothDiscoveryService.startSearching("0DL87651", "1DL87651");
+            mBluetoothDiscoveryService.startSearching(DEVICE_FILTER);
 
         }
 
@@ -432,6 +442,64 @@ public class MainActivity extends AppCompatActivity {
 
     private void hideProgress() {
         mViews.progressBar.setVisibility(View.INVISIBLE);
+    }
+
+    private void checkForLocationPermission(){
+
+        // Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+               new AlertDialog.Builder(this)
+                       .setTitle("Location Permission")
+                       .setMessage("To access bluetooth le devices this app needs location permission.")
+                       .setPositiveButton("Fine", new DialogInterface.OnClickListener() {
+                           @Override
+                           public void onClick(DialogInterface dialogInterface, int i) {
+
+                               ActivityCompat.requestPermissions(MainActivity.this,
+                                       new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
+                                       MY_PERMISSIONS_REQUEST_ACCESS_LOCATION);
+
+                           }
+                       })
+                       .setNegativeButton("Cancel", null)
+                       .show();
+
+            } else {
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_ACCESS_LOCATION);
+
+            }
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        if(requestCode == MY_PERMISSIONS_REQUEST_ACCESS_LOCATION){
+
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, "location permission granted");
+
+                /* restart discovery service */
+                if(mBluetoothDiscoveryService != null) {
+                    mBluetoothDiscoveryService.stopSearching();
+                    mBluetoothDiscoveryService.startSearching(DEVICE_FILTER);
+                }
+
+            }
+
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+
     }
 
     private class DeviceAdapter extends ArrayAdapter<BluetoothDevice> {
